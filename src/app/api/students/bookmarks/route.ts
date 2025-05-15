@@ -8,8 +8,9 @@ const DEFAULT_PAGE_SIZE = 10;
 // Get all bookmarked jobs for the logged-in student
 export async function GET(request: NextRequest) {
   try {
-    // Get student ID from cookie
-    const studentId = cookies().get('studentId')?.value;
+    // Get student ID from cookie - using async/await pattern
+    const cookieStore = await cookies();
+    const studentId = await cookieStore.get('studentId')?.value;
 
     if (!studentId) {
       return NextResponse.json(
@@ -19,21 +20,21 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    
+
     // Parse pagination parameters
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || String(DEFAULT_PAGE_SIZE));
-    
+
     // Calculate skip value for pagination
     const skip = (page - 1) * pageSize;
-    
+
     // Get total count for pagination
     const totalCount = await prisma.bookmarkedJob.count({
       where: {
         studentId,
       },
     });
-    
+
     // Get bookmarked jobs with pagination
     const bookmarkedJobs = await prisma.bookmarkedJob.findMany({
       where: {
@@ -57,12 +58,12 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-    
+
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / pageSize);
     const hasNextPage = page < totalPages;
     const hasPreviousPage = page > 1;
-    
+
     return NextResponse.json({
       bookmarkedJobs,
       pagination: {
@@ -86,8 +87,9 @@ export async function GET(request: NextRequest) {
 // Bookmark a job
 export async function POST(request: NextRequest) {
   try {
-    // Get student ID from cookie
-    const studentId = cookies().get('studentId')?.value;
+    // Get student ID from cookie - using async/await pattern
+    const cookieStore = await cookies();
+    const studentId = await cookieStore.get('studentId')?.value;
 
     if (!studentId) {
       return NextResponse.json(
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { jobId } = await request.json();
-    
+
     if (!jobId) {
       return NextResponse.json(
         { message: 'Job ID is required' },

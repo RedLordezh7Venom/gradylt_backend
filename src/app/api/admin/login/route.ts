@@ -37,8 +37,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set a cookie to maintain session
-    cookies().set('adminId', admin.id, {
+    // Set a cookie to maintain session - using async/await pattern
+    const cookieStore = await cookies();
+    cookieStore.set('adminId', admin.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7, // 1 week

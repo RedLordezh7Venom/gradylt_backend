@@ -8,8 +8,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get student ID from cookie
-    const studentId = cookies().get('studentId')?.value;
+    // Get student ID from cookie - using async/await pattern
+    const cookieStore = await cookies();
+    const studentId = await cookieStore.get('studentId')?.value;
 
     if (!studentId) {
       return NextResponse.json(
@@ -19,7 +20,7 @@ export async function GET(
     }
 
     const jobId = params.id;
-    
+
     // Check if job is bookmarked
     const bookmark = await prisma.bookmarkedJob.findUnique({
       where: {
@@ -49,8 +50,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get student ID from cookie
-    const studentId = cookies().get('studentId')?.value;
+    // Get student ID from cookie - using async/await pattern
+    const cookieStore = await cookies();
+    const studentId = await cookieStore.get('studentId')?.value;
 
     if (!studentId) {
       return NextResponse.json(
@@ -60,7 +62,7 @@ export async function DELETE(
     }
 
     const jobId = params.id;
-    
+
     // Check if bookmark exists
     const bookmark = await prisma.bookmarkedJob.findUnique({
       where: {

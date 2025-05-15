@@ -37,9 +37,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set a cookie to maintain session
+    // Set a cookie to maintain session - using async/await pattern
     // In a real application, you would use a proper session management or JWT
-    cookies().set('employerId', employer.id, {
+    const cookieStore = await cookies();
+    cookieStore.set('employerId', employer.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7, // 1 week
