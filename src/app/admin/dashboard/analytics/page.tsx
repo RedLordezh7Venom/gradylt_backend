@@ -47,26 +47,38 @@ export default function AnalyticsPage() {
       // Build query parameters
       const queryParams = new URLSearchParams();
       queryParams.set('period', period);
-      
+
       if (period === 'custom') {
         queryParams.set('startDate', startDate);
         queryParams.set('endDate', endDate);
       }
 
-      const response = await fetch(`/api/admin/analytics?${queryParams.toString()}`);
+      console.log('Fetching analytics data...');
+
+      const response = await fetch(`/api/admin/analytics?${queryParams.toString()}`, {
+        // Add cache: 'no-store' to prevent caching issues
+        cache: 'no-store',
+      });
+
+      console.log('Response status:', response.status);
 
       if (!response.ok) {
         if (response.status === 401) {
+          console.log('Unauthorized, redirecting to login');
           router.push('/admin/login');
           return;
         }
-        throw new Error('Failed to fetch analytics data');
+
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to fetch analytics data: ${response.status} ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Analytics data received:', data);
       setAnalytics(data);
     } catch (error) {
-      console.error('Error fetching analytics:', error);
+      console.error('Error in fetchAnalytics:', error);
       setError('Failed to load analytics data. Please try again.');
     } finally {
       setLoading(false);
@@ -81,14 +93,14 @@ export default function AnalyticsPage() {
   // Format duration in seconds to readable format
   const formatDuration = (seconds: number) => {
     if (!seconds) return '0s';
-    
+
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
-    
+
     if (minutes === 0) {
       return `${remainingSeconds}s`;
     }
-    
+
     return `${minutes}m ${remainingSeconds}s`;
   };
 
