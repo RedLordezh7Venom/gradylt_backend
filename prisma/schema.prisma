@@ -1,0 +1,238 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id                String              @id @default(cuid())
+  email             String              @unique
+  password          String
+  name              String
+  college           String
+  degree            String
+  year              Int
+  interests         String[]
+  cvPath            String?
+  isVerified        Boolean             @default(false)
+  university        University?         @relation(fields: [universityId], references: [id])
+  universityId      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  eventRegistrations EventRegistration[]
+  bookmarkedJobs    BookmarkedJob[]
+  sessions          UserSession[]
+}
+
+model Employer {
+  id          String        @id @default(cuid())
+  email       String        @unique
+  password    String
+  name        String
+  company     String
+  designation String
+  isVerified  Boolean       @default(false)
+  jobs        Job[]
+  sessions    UserSession[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Job {
+  id             String          @id @default(cuid())
+  title          String
+  description    String
+  type           String          // Full-time, Part-time, Internship, etc.
+  location       String
+  stipend        String
+  duration       String
+  applyLink      String
+  isRemote       Boolean         @default(false)
+  isPaid         Boolean         @default(true)
+  isShortTerm    Boolean         @default(false)
+  requiredDegree String?
+  status         JobStatus       @default(PENDING)
+  employer       Employer        @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  employerId     String
+  bookmarkedBy   BookmarkedJob[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum JobStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Event {
+  id               String             @id @default(cuid())
+  title            String
+  description      String
+  date             DateTime
+  endDate          DateTime?
+  location         String
+  eventType        EventType          @default(WEBINAR)
+  registrationLink String?
+  virtualLink      String?
+  capacity         Int?
+  isVirtual        Boolean            @default(false)
+  registrations    EventRegistration[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+enum EventType {
+  WEBINAR
+  WORKSHOP
+  CONTEST
+  OTHER
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, studentId])
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String   // PDF, video, etc.
+  fileUrl     String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model University {
+  id           String    @id @default(cuid())
+  name         String
+  location     String
+  website      String?
+  logoUrl      String?
+  description  String?
+  partnershipBenefits String?
+  isPartner    Boolean   @default(true)
+  isVisible    Boolean   @default(true)
+  displayOrder Int       @default(0)
+  students     Student[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      AdminRole @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+model BookmarkedJob {
+  id        String   @id @default(cuid())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId     String
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, jobId])
+}
+
+model UserSession {
+  id           String       @id @default(cuid())
+  sessionId    String       @unique // Client-generated session ID
+  userType     UserType
+  userId       String?      // Can be null for anonymous users
+  studentId    String?      // Reference to Student if userType is STUDENT
+  employerId   String?      // Reference to Employer if userType is EMPLOYER
+  student      Student?     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  employer     Employer?    @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  startTime    DateTime     @default(now())
+  endTime      DateTime?
+  duration     Int?         // Session duration in seconds
+  userAgent    String?      // Browser/device info
+  ipAddress    String?      // IP address (consider privacy implications)
+  referrer     String?      // Where the user came from
+  pageViews    PageView[]
+  userActions  UserAction[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([userType])
+  @@index([sessionId])
+  @@index([startTime])
+}
+
+model PageView {
+  id          String      @id @default(cuid())
+  session     UserSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  path        String      // URL path
+  title       String?     // Page title
+  entryTime   DateTime    @default(now())
+  exitTime    DateTime?
+  duration    Int?        // Time spent on page in seconds
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([path])
+  @@index([entryTime])
+}
+
+model UserAction {
+  id          String      @id @default(cuid())
+  session     UserSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  actionType  ActionType
+  actionData  Json?       // Additional data about the action
+  path        String      // URL path where action occurred
+  timestamp   DateTime    @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([actionType])
+  @@index([timestamp])
+}
+
+enum UserType {
+  ANONYMOUS
+  STUDENT
+  EMPLOYER
+  ADMIN
+}
+
+enum ActionType {
+  PAGE_VIEW
+  JOB_APPLY
+  JOB_BOOKMARK
+  EVENT_REGISTER
+  RESOURCE_DOWNLOAD
+  SEARCH
+  FILTER
+  LOGIN
+  LOGOUT
+  SIGNUP
+}
