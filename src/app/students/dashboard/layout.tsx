@@ -75,6 +75,7 @@ export default function DashboardLayout({
     { name: 'Saved Jobs', href: '/students/dashboard/saved-jobs' },
     { name: 'Events', href: '/students/dashboard/events' },
     { name: 'Resources', href: '/students/dashboard/resources' },
+    { name: 'Upskilling', href: '/upskilling' },
   ];
 
   return (

@@ -101,6 +101,7 @@ export default function AdminDashboardLayout({
     { id: 'jobs', label: 'Jobs', href: '/admin/dashboard/jobs' },
     { id: 'events', label: 'Events', href: '/admin/dashboard/events' },
     { id: 'universities', label: 'Universities', href: '/admin/dashboard/universities' },
+    { id: 'resources', label: 'Resources', href: '/admin/dashboard/resources' },
   ];
 
   return (
