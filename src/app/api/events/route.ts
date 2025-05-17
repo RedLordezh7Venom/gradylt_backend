@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
     const hasPreviousPage = page > 1;
 
     // Get all event types for filtering
-    const eventTypes = Object.values(prisma.eventType);
+    const eventTypes = ['WEBINAR', 'WORKSHOP', 'CONTEST', 'OTHER'];
 
     return NextResponse.json({
       events,

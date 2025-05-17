@@ -10,14 +10,14 @@ export function generateSessionId(): string {
 // Get session ID from localStorage or create a new one
 export function getSessionId(): string {
   if (typeof window === 'undefined') return '';
-  
+
   let sessionId = localStorage.getItem('sessionId');
-  
+
   if (!sessionId) {
     sessionId = generateSessionId();
     localStorage.setItem('sessionId', sessionId);
   }
-  
+
   return sessionId;
 }
 
@@ -25,47 +25,81 @@ export function getSessionId(): string {
 export async function trackPageView(path: string, title: string): Promise<void> {
   try {
     const sessionId = getSessionId();
-    
-    await fetch('/api/track', {
+
+    // Ensure we have a valid session ID before making the request
+    if (!sessionId) {
+      console.error('No session ID available for tracking');
+      return;
+    }
+
+    // Ensure we have valid data
+    const payload = {
+      sessionId,
+      eventType: 'pageView',
+      path: path || window.location.pathname,
+      title: title || document.title,
+    };
+
+    const response = await fetch('/api/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        sessionId,
-        eventType: 'pageView',
-        path,
-        title,
-      }),
+      body: JSON.stringify(payload),
+      // Add a timeout to prevent hanging requests
+      signal: AbortSignal.timeout(5000),
     });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Tracking API error:', response.status, errorData);
+    }
   } catch (error) {
+    // Don't let tracking errors affect the user experience
     console.error('Error tracking page view:', error);
   }
 }
 
 // Track user action
 export async function trackAction(
-  actionType: string, 
-  path: string, 
+  actionType: string,
+  path: string,
   actionData?: any
 ): Promise<void> {
   try {
     const sessionId = getSessionId();
-    
-    await fetch('/api/track', {
+
+    // Ensure we have a valid session ID before making the request
+    if (!sessionId) {
+      console.error('No session ID available for tracking');
+      return;
+    }
+
+    // Ensure we have valid data
+    const payload = {
+      sessionId,
+      eventType: 'action',
+      actionType: actionType || 'UNKNOWN',
+      path: path || window.location.pathname,
+      actionData: actionData || null,
+    };
+
+    const response = await fetch('/api/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        sessionId,
-        eventType: 'action',
-        actionType,
-        path,
-        actionData,
-      }),
+      body: JSON.stringify(payload),
+      // Add a timeout to prevent hanging requests
+      signal: AbortSignal.timeout(5000),
     });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Tracking API error:', response.status, errorData);
+    }
   } catch (error) {
+    // Don't let tracking errors affect the user experience
     console.error('Error tracking action:', error);
   }
 }
@@ -74,7 +108,7 @@ export async function trackAction(
 export async function trackSessionEnd(): Promise<void> {
   try {
     const sessionId = getSessionId();
-    
+
     await fetch('/api/track', {
       method: 'POST',
       headers: {

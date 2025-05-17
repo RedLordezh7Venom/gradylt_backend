@@ -28,10 +28,21 @@ export default function AdminDashboardLayout({
       try {
         setLoading(true);
 
-        const response = await fetch('/api/admin/profile');
+        console.log('Fetching admin profile...');
+        const response = await fetch('/api/admin/profile', {
+          // Ensure we're not using cached responses
+          cache: 'no-store',
+          // Add a timeout to prevent hanging requests
+          signal: AbortSignal.timeout(5000),
+        });
+
+        console.log('Admin profile response status:', response.status);
 
         if (response.status === 401) {
           // Not logged in, redirect to login page
+          console.log('Unauthorized, redirecting to login from layout');
+          // Clear any existing admin cookie to ensure a clean state
+          document.cookie = 'adminId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           router.push('/admin/login');
           return;
         }
@@ -41,10 +52,13 @@ export default function AdminDashboardLayout({
         }
 
         const data = await response.json();
+        console.log('Admin profile data received:', data.admin ? 'Valid admin' : 'No admin data');
         setAdmin(data.admin);
       } catch (error) {
+        console.error('Error fetching admin profile:', error);
         setError('Failed to load profile. Please try again.');
-        console.error(error);
+        // On error, also redirect to login as a safety measure
+        router.push('/admin/login');
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
+// Create a FileList validator that works in both environments
+const fileListValidator = isBrowser
+  ? z.instanceof(FileList).optional().transform(file => file?.[0])
+  : z.any().optional(); // Use any() for server-side rendering
+
 // Student sign-up form validation schema
 export const studentSignUpSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -19,7 +27,7 @@ export const studentSignUpSchema = z.object({
     .min(1, { message: 'Year must be at least 1' })
     .max(6, { message: 'Year must be at most 6' }),
   interests: z.array(z.string()).min(1, { message: 'Please select at least one interest' }),
-  cv: z.instanceof(FileList).optional().transform(file => file?.[0]),
+  cv: fileListValidator,
 }).refine(data => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],

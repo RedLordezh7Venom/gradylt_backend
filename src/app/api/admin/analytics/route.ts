@@ -7,22 +7,22 @@ export async function GET(request: NextRequest) {
     // Verify admin authentication
     const cookieStore = await cookies();
     const adminId = await cookieStore.get('adminId')?.value;
-    let admin = null;
 
-    // For development purposes, we'll allow access even without admin login
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-
-    if (adminId) {
-      // Get admin to verify if we have an adminId
-      admin = await prisma.admin.findUnique({
-        where: { id: adminId },
-      });
+    if (!adminId) {
+      return NextResponse.json(
+        { message: 'Unauthorized - No admin ID found' },
+        { status: 401 }
+      );
     }
 
-    // In production, require admin authentication
-    if (!isDevelopment && (!adminId || !admin)) {
+    // Get admin to verify if we have an adminId
+    const admin = await prisma.admin.findUnique({
+      where: { id: adminId },
+    });
+
+    if (!admin) {
       return NextResponse.json(
-        { message: 'Unauthorized' },
+        { message: 'Unauthorized - Invalid admin ID' },
         { status: 401 }
       );
     }
