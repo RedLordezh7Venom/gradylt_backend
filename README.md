@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gradlyft - Job & Student Portal
+
+A comprehensive job and internship portal for students with engagement tools, soft skills modules, and university tie-ups.
 
 ## Getting Started
 
@@ -6,31 +8,114 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## CI/CD Pipeline
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project uses GitHub Actions for continuous integration and continuous deployment.
 
-## Learn More
+### Workflow
 
-To learn more about Next.js, take a look at the following resources:
+The CI/CD pipeline consists of the following stages:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Lint**: Checks code quality using ESLint
+2. **Test**: Runs Jest tests to ensure functionality
+3. **Build**: Builds the Next.js application
+4. **Deploy to Staging**: Automatically deploys to the staging environment when changes are pushed to the main branch
+5. **Deploy to Production**: Manually triggered deployment to the production environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Setting Up CI/CD
+
+To set up the CI/CD pipeline, you need to add the following secrets to your GitHub repository:
+
+- `VERCEL_TOKEN`: Your Vercel API token
+- `VERCEL_ORG_ID`: Your Vercel organization ID
+- `VERCEL_PROJECT_ID`: Your Vercel project ID
+
+You can get these values from your Vercel account settings and project settings.
+
+### Deployment Environments
+
+- **Staging**: Automatically deployed when changes are pushed to the main branch
+- **Production**: Manually triggered from the GitHub Actions workflow
+
+### Manual Deployment
+
+To manually deploy to production:
+
+1. Go to the "Actions" tab in your GitHub repository
+2. Select the "CI/CD Pipeline" workflow
+3. Click "Run workflow"
+4. Select "production" from the environment dropdown
+5. Click "Run workflow"
+
+## Development
+
+### Prerequisites
+
+- Node.js 18 or later
+- npm 9 or later
+- PostgreSQL database
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env.local
+   ```
+4. Run database migrations:
+   ```bash
+   npm run db:migrate
+   ```
+
+### Testing
+
+Run tests:
+```bash
+npm test
+```
+
+Run tests in watch mode:
+```bash
+npm run test:watch
+```
+
+### Building
+
+Build the application:
+```bash
+npm run build
+```
+
+Start the production server:
+```bash
+npm start
+```
+
+## Database Migrations
+
+Run database migrations:
+```bash
+npm run db:migrate
+```
+
+## Environment Variables
+
+The following environment variables are required:
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js
+- `NEXTAUTH_URL`: URL for NextAuth.js
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
