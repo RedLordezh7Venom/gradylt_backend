@@ -1,6 +1,6 @@
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Briefcase, GraduationCap, Building, Users, Calendar, BookOpen } from 'lucide-react';
+import { ArrowRight, Briefcase, GraduationCap, Building, Calendar, BookOpen } from 'lucide-react';
 
 export default function Home() {
   return (

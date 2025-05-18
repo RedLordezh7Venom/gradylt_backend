@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, FileText, Video, Mic, Users } from 'lucide-react';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 type Resource = {
   id: string;
@@ -31,7 +30,7 @@ export default function ResourcesAdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  
+
   // Form data for adding/editing resources
   const [formData, setFormData] = useState({
     title: '',
@@ -40,23 +39,23 @@ export default function ResourcesAdminPage() {
     fileUrl: '',
     category: '',
   });
-  
+
   // Selected resource for editing/deleting
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  
+
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  
+
   // Filter states
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  
+
   // Current page state
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Fetch resources with filters and pagination
   const fetchResources = async () => {
     try {
@@ -99,7 +98,7 @@ export default function ResourcesAdminPage() {
       setLoading(false);
     }
   };
-  
+
   // Open edit resource modal
   const openEditModal = (resource: Resource) => {
     setSelectedResource(resource);
@@ -112,13 +111,13 @@ export default function ResourcesAdminPage() {
     });
     setIsEditModalOpen(true);
   };
-  
+
   // Open delete resource modal
   const openDeleteModal = (resource: Resource) => {
     setSelectedResource(resource);
     setIsDeleteModalOpen(true);
   };
-  
+
   // Open add resource modal
   const openAddModal = () => {
     setFormData({
@@ -130,7 +129,7 @@ export default function ResourcesAdminPage() {
     });
     setIsAddModalOpen(true);
   };
-  
+
   // Handle form input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -139,7 +138,7 @@ export default function ResourcesAdminPage() {
       [name]: value,
     });
   };
-  
+
   // Add resource
   const addResource = async () => {
     try {
@@ -170,14 +169,14 @@ export default function ResourcesAdminPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Edit resource
   const editResource = async () => {
     if (!selectedResource) return;
-    
+
     try {
       setActionLoading(true);
-      
+
       const response = await fetch(`/api/admin/resources/${selectedResource.id}`, {
         method: 'PATCH',
         headers: {
@@ -185,15 +184,15 @@ export default function ResourcesAdminPage() {
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to update resource');
       }
-      
+
       const data = await response.json();
-      
+
       // Update resource in the list
-      setResources(resources.map(resource => 
+      setResources(resources.map(resource =>
         resource.id === selectedResource.id ? data.resource : resource
       ));
       setIsEditModalOpen(false);
@@ -204,22 +203,22 @@ export default function ResourcesAdminPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Delete resource
   const deleteResource = async () => {
     if (!selectedResource) return;
-    
+
     try {
       setActionLoading(true);
-      
+
       const response = await fetch(`/api/admin/resources/${selectedResource.id}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to delete resource');
       }
-      
+
       // Remove resource from the list
       setResources(resources.filter(resource => resource.id !== selectedResource.id));
       setIsDeleteModalOpen(false);
@@ -230,38 +229,38 @@ export default function ResourcesAdminPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Fetch resources on initial load and when filters or page changes
   useEffect(() => {
     fetchResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, search, selectedType, selectedCategory]);
-  
+
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1); // Reset to first page when searching
     fetchResources();
   };
-  
+
   // Handle filter change
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === 'type') {
       setSelectedType(value);
     } else if (name === 'category') {
       setSelectedCategory(value);
     }
-    
+
     setCurrentPage(1); // Reset to first page when filtering
   };
-  
+
   // Handle pagination
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-  
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -273,13 +272,13 @@ export default function ResourcesAdminPage() {
           Add Resource
         </button>
       </div>
-      
+
       {error && (
         <div className="bg-red-100 dark:bg-red-900 p-4 rounded mb-6">
           <p className="text-red-800 dark:text-red-200">{error}</p>
         </div>
       )}
-      
+
       {/* Filters */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6">
         <h2 className="text-lg font-semibold mb-4">Filters</h2>
@@ -333,7 +332,7 @@ export default function ResourcesAdminPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Resources Table */}
       {loading ? (
         <div className="text-center p-6">
@@ -401,7 +400,7 @@ export default function ResourcesAdminPage() {
           </div>
         </div>
       )}
-      
+
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
         <div className="flex justify-center mt-6">
@@ -426,7 +425,7 @@ export default function ResourcesAdminPage() {
           </nav>
         </div>
       )}
-      
+
       {/* Add Resource Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -535,7 +534,7 @@ export default function ResourcesAdminPage() {
           </div>
         </div>
       )}
-      
+
       {/* Edit Resource Modal */}
       {isEditModalOpen && selectedResource && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -644,14 +643,14 @@ export default function ResourcesAdminPage() {
           </div>
         </div>
       )}
-      
+
       {/* Delete Resource Modal */}
       {isDeleteModalOpen && selectedResource && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Delete Resource</h2>
             <p className="mb-6">
-              Are you sure you want to delete the resource "{selectedResource.title}"? This action cannot be undone.
+              Are you sure you want to delete the resource &quot;{selectedResource.title}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end">
               <button

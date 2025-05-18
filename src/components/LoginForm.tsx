@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormValues } from '@/lib/validations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Button, Card, Input } from '@/components/ui/DesignSystem';
+import { LogIn } from 'lucide-react';
 
 export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,62 +55,56 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Student Login</h2>
+    <Card className="max-w-md mx-auto p-8 glassmorphism">
+      <h2 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+        Student Login
+      </h2>
 
       {submitError ? (
-        <div className="bg-red-100 dark:bg-red-900 p-4 rounded mb-6">
-          <p className="text-red-800 dark:text-red-200">{submitError}</p>
+        <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800">
+          <p>{submitError}</p>
         </div>
       ) : null}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            {...register('email')}
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="john.doe@example.com"
-          />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <Input
+          id="email"
+          type="email"
+          label="Email"
+          placeholder="john.doe@example.com"
+          error={errors.email?.message}
+          {...register('email')}
+        />
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            {...register('password')}
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-          )}
-        </div>
+        <Input
+          id="password"
+          type="password"
+          label="Password"
+          error={errors.password?.message}
+          {...register('password')}
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md disabled:opacity-50"
+          variant="primary"
+          fullWidth
+          isLoading={isSubmitting}
+          icon={<LogIn />}
+          iconPosition="left"
         >
           {isSubmitting ? 'Logging in...' : 'Log In'}
-        </button>
+        </Button>
 
-        <p className="text-center text-sm mt-4">
+        <p className="text-center text-sm mt-6 text-gray-700 dark:text-gray-300">
           Don't have an account?{' '}
-          <Link href="/signup" className="text-blue-600 hover:underline">
+          <Link
+            href="/signup"
+            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
+          >
             Sign up
           </Link>
         </p>
       </form>
-    </div>
+    </Card>
   );
 }

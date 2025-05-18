@@ -1,24 +1,33 @@
 import Link from 'next/link';
+import { GradientText } from '@/components/ui/DesignSystem';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-100 dark:bg-gray-800 py-8 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-gradient-to-b from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950 py-16 mt-auto relative overflow-hidden">
+      {/* Background Blobs */}
+      <div className="absolute bottom-0 left-0 w-full h-full overflow-hidden z-0 opacity-30">
+        <div className="absolute bottom-0 left-10 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-lg font-semibold mb-4">Job & Student Portal</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4 max-w-md">
+            <h3 className="text-2xl font-bold mb-4">
+              <GradientText>Job & Student Portal</GradientText>
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-md">
               Connecting talented students with the best job opportunities. Our platform helps students find internships and jobs while enabling employers to discover top talent.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-5">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-300"
                 aria-label="Facebook"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -29,7 +38,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-400 dark:hover:text-blue-300"
+                className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-300"
                 aria-label="Twitter"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -40,7 +49,7 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-500"
+                className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-300"
                 aria-label="LinkedIn"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -51,7 +60,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400"
+                className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-300"
                 aria-label="Instagram"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -63,40 +72,40 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400">Quick Links</h3>
+            <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/jobs" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/jobs" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Browse Jobs
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/events" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Events
                 </Link>
               </li>
               <li>
-                <Link href="/universities" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/universities" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Partner Universities
                 </Link>
               </li>
               <li>
-                <Link href="/upskilling" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/upskilling" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Upskilling
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/contact" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Contact Us
                 </Link>
               </li>
@@ -105,15 +114,15 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400">Legal</h3>
+            <ul className="space-y-3">
               <li>
-                <Link href="/privacy-policy" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/privacy-policy" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-conditions" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/terms-conditions" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
                   Terms & Conditions
                 </Link>
               </li>
@@ -121,9 +130,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            © {currentYear} Job & Student Portal. All rights reserved.
+        <div className="border-t border-indigo-100 dark:border-indigo-900/50 mt-12 pt-8 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            © {currentYear} <span className="text-indigo-600 dark:text-indigo-400">Job & Student Portal</span>. All rights reserved.
           </p>
         </div>
       </div>

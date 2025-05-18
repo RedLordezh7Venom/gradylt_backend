@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { format, subDays, subMonths } from 'date-fns';
+import { format, subDays } from 'date-fns';
 
 // Define types for analytics data
 type AnalyticsData = {
@@ -88,6 +88,7 @@ export default function AnalyticsClient() {
   // Fetch data on initial load and when period changes
   useEffect(() => {
     fetchAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);
 
   // Format duration in seconds to readable format

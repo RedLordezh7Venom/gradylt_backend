@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 type Employer = {
   id: string;
@@ -43,44 +42,44 @@ export default function JobsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  
+
   // Search and filter state
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [status, setStatus] = useState<string>(
     searchParams.has('status') ? searchParams.get('status') || '' : ''
   );
-  
+
   // Current page state
   const [currentPage, setCurrentPage] = useState(
     parseInt(searchParams.get('page') || '1')
   );
-  
+
   // Fetch jobs with filters and pagination
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      
+
       // Build query string from filters
       const queryParams = new URLSearchParams();
-      
+
       // Add pagination
       queryParams.set('page', currentPage.toString());
-      
+
       // Add filters
       if (search) {
         queryParams.set('search', search);
       }
-      
+
       if (status) {
         queryParams.set('status', status);
       }
-      
+
       const response = await fetch(`/api/admin/jobs?${queryParams.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
-      
+
       const data = await response.json();
       setJobs(data.jobs);
       setPagination(data.pagination);
@@ -91,20 +90,20 @@ export default function JobsPage() {
       setLoading(false);
     }
   };
-  
+
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     updateUrlParams({ page: page.toString() });
   };
-  
+
   // Handle search
   const handleSearch = () => {
     setCurrentPage(1);
     updateUrlParams({ search, status, page: '1' });
     fetchJobs();
   };
-  
+
   // Handle filter change
   const handleFilterChange = (name: string, value: string) => {
     if (name === 'status') {
@@ -113,11 +112,11 @@ export default function JobsPage() {
       setCurrentPage(1);
     }
   };
-  
+
   // Update URL parameters
   const updateUrlParams = (params: Record<string, string>) => {
     const newParams = new URLSearchParams(searchParams.toString());
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value) {
         newParams.set(key, value);
@@ -125,27 +124,27 @@ export default function JobsPage() {
         newParams.delete(key);
       }
     });
-    
+
     router.push(`/admin/dashboard/jobs?${newParams.toString()}`);
   };
-  
+
   // Open job details modal
   const openJobModal = (job: Job) => {
     setSelectedJob(job);
     setIsModalOpen(true);
   };
-  
+
   // Open delete confirmation modal
   const openDeleteModal = (job: Job) => {
     setSelectedJob(job);
     setIsDeleteModalOpen(true);
   };
-  
+
   // Approve job
   const approveJob = async (id: string) => {
     try {
       setActionLoading(true);
-      
+
       const response = await fetch(`/api/admin/jobs/${id}`, {
         method: 'PATCH',
         headers: {
@@ -153,16 +152,16 @@ export default function JobsPage() {
         },
         body: JSON.stringify({ status: 'APPROVED' }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to approve job');
       }
-      
+
       // Update job in the list
-      setJobs(jobs.map(job => 
+      setJobs(jobs.map(job =>
         job.id === id ? { ...job, status: 'APPROVED' } : job
       ));
-      
+
       if (selectedJob && selectedJob.id === id) {
         setSelectedJob({ ...selectedJob, status: 'APPROVED' });
       }
@@ -173,12 +172,12 @@ export default function JobsPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Reject job
   const rejectJob = async (id: string) => {
     try {
       setActionLoading(true);
-      
+
       const response = await fetch(`/api/admin/jobs/${id}`, {
         method: 'PATCH',
         headers: {
@@ -186,16 +185,16 @@ export default function JobsPage() {
         },
         body: JSON.stringify({ status: 'REJECTED' }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to reject job');
       }
-      
+
       // Update job in the list
-      setJobs(jobs.map(job => 
+      setJobs(jobs.map(job =>
         job.id === id ? { ...job, status: 'REJECTED' } : job
       ));
-      
+
       if (selectedJob && selectedJob.id === id) {
         setSelectedJob({ ...selectedJob, status: 'REJECTED' });
       }
@@ -206,22 +205,22 @@ export default function JobsPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Delete job
   const deleteJob = async () => {
     if (!selectedJob) return;
-    
+
     try {
       setActionLoading(true);
-      
+
       const response = await fetch(`/api/admin/jobs/${selectedJob.id}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to delete job');
       }
-      
+
       // Remove job from the list
       setJobs(jobs.filter(job => job.id !== selectedJob.id));
       setIsDeleteModalOpen(false);
@@ -232,13 +231,13 @@ export default function JobsPage() {
       setActionLoading(false);
     }
   };
-  
+
   // Fetch jobs on initial load and when filters or page changes
   useEffect(() => {
     fetchJobs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, searchParams]);
-  
+
   // Get status badge color
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -251,17 +250,17 @@ export default function JobsPage() {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
     }
   };
-  
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Manage Jobs</h1>
-      
+
       {error && (
         <div className="bg-red-100 dark:bg-red-900 p-4 rounded mb-6">
           <p className="text-red-800 dark:text-red-200">{error}</p>
         </div>
       )}
-      
+
       {/* Search and Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -286,7 +285,7 @@ export default function JobsPage() {
               </button>
             </div>
           </div>
-          
+
           <div>
             <label htmlFor="status" className="block text-sm font-medium mb-1">
               Status
@@ -305,7 +304,7 @@ export default function JobsPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Jobs Table */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         {loading ? (
@@ -394,7 +393,7 @@ export default function JobsPage() {
             </table>
           </div>
         )}
-        
+
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
           <div className="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
@@ -433,7 +432,7 @@ export default function JobsPage() {
           </div>
         )}
       </div>
-      
+
       {/* Job Details Modal */}
       {isModalOpen && selectedJob && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -446,7 +445,7 @@ export default function JobsPage() {
                 <h4 className="text-xl font-semibold">{selectedJob.title}</h4>
                 <p className="text-gray-500 dark:text-gray-400">{selectedJob.employer.company}</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Type</p>
@@ -477,7 +476,7 @@ export default function JobsPage() {
                   <p className="mt-1">{new Date(selectedJob.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</p>
                 <p className="mt-1 whitespace-pre-line">{selectedJob.description}</p>
@@ -518,7 +517,7 @@ export default function JobsPage() {
           </div>
         </div>
       )}
-      
+
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && selectedJob && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
