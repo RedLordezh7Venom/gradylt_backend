@@ -80,7 +80,16 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-output
-          path: .next/
+          path: |
+            .next/
+            public/
+            package.json
+            package-lock.json
+            next.config.ts
+            .env.production
+            .eslintrc.json
+            tsconfig.json
+            prisma/
           retention-days: 7
 
   deploy-staging:
@@ -108,7 +117,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-output
-          path: .next/
+          path: ./
 
       - name: Deploy to Vercel (Staging)
         id: deploy
@@ -147,7 +156,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-output
-          path: .next/
+          path: ./
 
       - name: Deploy to Vercel (Production)
         id: deploy
